@@ -6,6 +6,8 @@ import{getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/sto
 import {app} from '../firebase.js'
 import {CircularProgressbar} from 'react-circular-progressbar'
 import   'react-circular-progressbar/dist/styles.css'
+import { useNavigate } from 'react-router-dom';
+
 
 
 
@@ -14,6 +16,8 @@ export default function CreatePost() {
   const [imageFileUploadProgress,setImageFileUploadProgress]=useState(null)
   const [imageFileUploadError,setImageFileUploadError]=useState(null)
   const [formData,setFormData]=useState({})
+  const [puplishError,setPuplishError]=useState(null)
+  const navigate=useNavigate()
   const handleUploadImage=async()=>{
     try {
       if(!file){
@@ -52,14 +56,43 @@ export default function CreatePost() {
     }
 
   }
+
+  const handleSubmit=async(e)=>{
+e.preventDefault()
+try {
+  const res= await fetch('/api/post/create',{
+    method:"POST",
+    headers:{
+      "content-Type":"application/json",
+    },
+    body:JSON.stringify(formData)
+  });
+  const data=await res.json()
+  if(!res.ok){
+    setPuplishError(data.message)
+    return
+  }
+  
+  if(res.ok){
+    setPuplishError(null)
+    navigate(`/post/${data.slug}`)
+  }
+} catch (error) {
+  setPuplishError("something went wrong")
+}
+  }
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
    <h1 className='text-center text-3xl my-7 font-semibold'>create a post</h1>
-   <form className='flex flex-col gap-4'>
+   <form className='flex flex-col gap-4'onSubmit={handleSubmit}>
     <div className='flex flex-col gap-4 sm:flex-row justify-between'>
         <TextInput type='text' placeholder='Title' required id='title'
-        className='flex-1'/>
-        <Select>
+        className='flex-1'
+        onChange={(e)=>setFormData({...formData,title:e.target.value})}/>
+        <Select 
+        onChange={(e)=>setFormData({...formData,category:e.target.value})}
+        >
+        
             <option value='uncategorized'>select a category</option>
             <option value='javascript'>javascript</option>
             <option value='react.js'>react.js</option>
@@ -94,11 +127,13 @@ export default function CreatePost() {
           className='w-full h-72 object-cover'/>)}
        <ReactQuill theme='snow'
         placeholder='write something...'
-         className='h-72 mb-12' required/>
+         className='h-72 mb-12' required
+         onChange={(value)=>{setFormData({...formData,content:value})}}/>
        <Button type='submit'
         gradientDuoTone='purpleToPink' >
         Publish
         </Button>
+        {puplishError && <Alert color='failure' className='mt-5'>{puplishError}</Alert>}
    </form>
     </div>
 
