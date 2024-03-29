@@ -19,7 +19,7 @@ export default function Dashboard() {
   <div className='md:w-56'>
     <DashSidebar/>
   </div>
-  {tab=== 'profile'&& <DashProfile/>}
+  {tab=== 'profile'&& <DashProfile/> }
   {/* posts */}
   {tab==='posts' && <DashPosts/>}
 </div>
