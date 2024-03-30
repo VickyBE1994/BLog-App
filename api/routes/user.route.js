@@ -9,6 +9,7 @@ router.put('/update/:userId',veryfyToken,updateUser)
 router.delete('/delete/:userId',veryfyToken,deleteUser)
 router.post('/signout',signout)
 router.get('/getusers',veryfyToken,getusers)
+router.delete('/deleteusers',veryfyToken,deleteUser)
 
 
     
