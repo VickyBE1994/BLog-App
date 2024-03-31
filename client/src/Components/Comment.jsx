@@ -4,7 +4,7 @@ import {FaThumbsUp} from 'react-icons/fa'
 import {  useSelector } from "react-redux"
 import {Button, Textarea} from 'flowbite-react'
 
-export default function Comment({comment,onLike,onEdit}) {
+export default function Comment({comment,onLike,onEdit,onDelete}) {
     const [user,setUser]=useState({})
     const{currentUser}=useSelector((state)=>state.user)
     const [isEditing,setIsEditing]=useState(false)
@@ -33,25 +33,7 @@ useEffect(() => {
   }
 
 
-//   const handleSave=async()=>{
-// try {
-//     const res= await fetch(`/api/comment/editComment/${comment._id}`,{
-//       method:"PUT",
-//       headers:{
-//         'Content-type':'application/json'
-//       },
-//       body:JSON.stringify({
-//         content:editedContent
-//       })
-//     })
-//     if(res.ok){
-//       setIsEditing(false);
-//       onEdit(comment,editedContent)
-//     }
-// } catch (error) {
-//   console.log(error.message);
-// }
-//   }
+
   const handleSave = async () => {
     try {
       const res = await fetch(`/api/comment/editComment/${comment._id}`, {
@@ -71,6 +53,11 @@ useEffect(() => {
       console.log(error.message);
     }
   };
+
+  const handleDelete=async()=>{
+
+
+  }
 
 
   return (
@@ -112,9 +99,6 @@ useEffect(() => {
         </Button>
        </div>
        </>
-
-    
-    
     ):(
       <>
       <p className="text-gray-500 mb-2">{comment.content}</p>
@@ -139,12 +123,22 @@ useEffect(() => {
       </p>
       {
         currentUser && (currentUser._id === comment.userId || currentUser.isAdmin) &&(
+          <>
           <button
           type="button"
           onClick={handleEdit}
           className="text-gray-400 hover:text-blue-500"
 
-          >edit</button>
+          >edit
+          </button>
+          <button
+          type="button"
+          onClick={()=>onDelete(comment._id)}
+          className="text-gray-400 hover:text-red-500"
+          >delete
+          </button>
+          </>
+          
         )
       }
     </div>
