@@ -1,17 +1,32 @@
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {FaMoon,FaSun} from 'react-icons/fa'
 import {AiOutlineSearch} from 'react-icons/ai'
 import {useSelector,useDispatch} from 'react-redux'
 import { togggleTheme } from "../redux/theme/themeSlice";
 import { signoutSuccess } from "../redux/user/userSlice.js";
+import { useState } from "react";
+import { useEffect } from "react";
+
 
 
 export default function Header() {
   const path=useLocation().pathname
+  const location=useLocation()
   const disPatch=useDispatch()
   const {currentUser}=useSelector(state=>state.user)
   const{theme}=useSelector(state=>state.theme)
+  const [searchTerm,setSearchTerm]=useState('')
+  const navigate =useNavigate()
+//console.log(searchTerm);
+  useEffect(()=>{
+   const urlParams= new URLSearchParams(location.search)
+   const searchTermFromUrl=urlParams.get('searchTerm')
+   if(searchTermFromUrl){
+    setSearchTerm(searchTermFromUrl)
+   }
+
+  },[location.search])
 
 
   const handleSignout=async()=>{
@@ -29,6 +44,15 @@ export default function Header() {
         console.log(error.message);
     }
     }
+
+
+    const handleSubmit=(e)=>{
+    e.preventDefault()
+    const urlParams=new URLSearchParams(location.search)
+    urlParams.set('searchTerm',searchTerm)
+    const searchQuery=urlParams.toString()
+    navigate(`/search${searchQuery}`)
+    }
   
 
   return (
@@ -39,12 +63,14 @@ export default function Header() {
        via-purple-500 to-pink-500  rounded-lg text-white" >vkey's</span>
       Blog
     </Link>
-    <form >
+    <form onSubmit={handleSubmit}>
       <TextInput
       type="text"
       placeholder="search"
       rightIcon={AiOutlineSearch}
       className="hidden lg:inline"
+      value={searchTerm}
+      onChange={(e)=>setSearchTerm(e.target.value)}
       />
     </form>
     <button className="w-12 h-10 lg:hidden" color='gray' >
