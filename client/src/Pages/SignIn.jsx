@@ -7,19 +7,19 @@ import OAuth from '../Components/OAuth';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-const{loading,error:errorMessage}=useSelector(state=>state.user)
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const disPatch=useDispatch()
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if ( !formData.email || !formData.password) {
-      return signInFailure('require fill all fields')
+    if (!formData.email || !formData.password) {
+      return dispatch(signInFailure('Please fill all the fields'));
     }
     try {
-   disPatch(signInStart())
+      dispatch(signInStart());
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -27,15 +27,15 @@ const{loading,error:errorMessage}=useSelector(state=>state.user)
       });
       const data = await res.json();
       if (data.success === false) {
-       disPatch(signInFailure(data.message))
+        dispatch(signInFailure(data.message));
       }
 
-      if(res.ok) {
-        disPatch(signInSuccess(data))
+      if (res.ok) {
+        dispatch(signInSuccess(data));
         navigate('/');
       }
     } catch (error) {
-     disPatch(signInFailure(error.message))
+      dispatch(signInFailure(error.message));
     }
   };
   return (
@@ -50,7 +50,7 @@ const{loading,error:errorMessage}=useSelector(state=>state.user)
             Blog
           </Link>
           <p className='text-sm mt-5'>
-            This is a demo project. You can sign In with your email and password
+            This is a demo project. You can sign in with your email and password
             or with Google.
           </p>
         </div>
@@ -71,7 +71,7 @@ const{loading,error:errorMessage}=useSelector(state=>state.user)
               <Label value='Your password' />
               <TextInput
                 type='password'
-                placeholder='*********'
+                placeholder='**********'
                 id='password'
                 onChange={handleChange}
               />
@@ -90,10 +90,10 @@ const{loading,error:errorMessage}=useSelector(state=>state.user)
                 'Sign In'
               )}
             </Button>
-            <OAuth/>
+            <OAuth />
           </form>
           <div className='flex gap-2 text-sm mt-5'>
-            <span> Don't Have an account?</span>
+            <span>Dont Have an account?</span>
             <Link to='/sign-up' className='text-blue-500'>
               Sign Up
             </Link>
