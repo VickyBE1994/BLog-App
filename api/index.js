@@ -1,7 +1,6 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import cors from 'cors'
 import userRoutes from './routes/user.route.js'
 import authRoutes from './routes/auth.route.js'
 import postRoutes from './routes/post.route.js'
@@ -49,7 +48,7 @@ app.get('*',(req,res)=>{
 
 app.use((err,req,res,next)=>{
 const statuscode=err.statuscode ||500
-const message=err.message||'internal server error'
+const message=err.message||'Internal server error'
 res.status(statuscode).json({
     succeuss:false,
     statuscode,
